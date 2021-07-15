@@ -1,5 +1,8 @@
 <?php
 
+require get_theme_file_path('/inc/search-route.php');
+require get_theme_file_path('/inc/pageBanner.php');
+
 function university_custom_rest() {
   register_rest_field('post', 'authorName', array(
     'get_callback' => function() {return get_the_author();}
@@ -7,35 +10,6 @@ function university_custom_rest() {
 }
 
 add_action('rest_api_init', 'university_custom_rest');
-
-function pageBanner($args = null) {
-  if (!$args['title'])
-    $args['title'] = get_the_title();
-
-  if (!$args['subtitle'])
-    $args['subtitle'] = get_field('page_banner_subtitle');
-
-  if (!$args['photo'] && get_field('page_banner_background_image'))
-    $args['photo'] = get_field('page_banner_background_image')['sizes']['pageBanner'];
-  else
-    $args['photo'] = get_theme_file_uri('/images/ocean.jpg');
-?>
-
-  <div class="page-banner">
-    <div 
-        class="page-banner__bg-image" 
-        style="background-image: url(<?php echo $args['photo']; ?>);">
-    </div>
-    <div class="page-banner__content container container--narrow">
-      <h1 class="page-banner__title"><?php echo $args['title']; ?></h1>
-      <div class="page-banner__intro">
-        <p><?php echo $args['subtitle']; ?></p>
-      </div>
-    </div>  
-  </div>
-
-<?php
-}
 
 function university_files() {
   wp_enqueue_script( 'google-map', '//maps.googleapis.com/maps/api/js?key=AIzaSyB8FsunUxSCt0v2v5pAvS0PEzJT13xxhBQ', null, '1.0', true);
@@ -48,7 +22,6 @@ function university_files() {
     'root_url' => get_site_url()
   ));
 }
-
 
 add_action('wp_enqueue_scripts', 'university_files');
 

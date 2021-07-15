@@ -47,31 +47,68 @@ export default class Search {
     }
 
     getResults() {
-        const postsUrl = universityData.root_url + '/wp-json/wp/v2/posts?search=' + this.searchValue;
-        const pagesUrl = universityData.root_url + '/wp-json/wp/v2/pages?search=' + this.searchValue;
+        const dataUrl = universityData.root_url + '/wp-json/university/v1/search?term=' + this.searchValue;
 
-        $.when(
-            $.getJSON(postsUrl),
-            $.getJSON(pagesUrl)
-        )
-        .then((posts, pages) => {
-            const combinedResults = posts[0].concat(pages[0]);
-            console.log(posts);
-            console.log(pages);
-            console.log(combinedResults);
+        $.getJSON(dataUrl)
+        .done((results) => {
+            console.log(results);
+            const posts = results.generalInfos;
             this.resultsDiv.append(`
-                <h2 class="search-overlay__section-title">General information</h2>
-                ${combinedResults.length ? '<ul class="link-list min-list">' : '<p>No general information matchs that search</p>'}
-                    ${combinedResults.map(result => `
-                        <li>
-                            <a href="${result.link}">${result.title.rendered}</a> ${result.type == 'post' ? `by ${result.authorName}` : '' }
-                        </li>
-                    `).join('')}
-                ${combinedResults.length ? '</ul>' : ''}
+                <div class="row">
+                    <div class="one-third">
+                        <h2 class="search-overlay__section-title">General information</h2>
+                        ${results.generalInfos.length ? '<ul class="link-list min-list">' : '<p>No general information matchs that search</p>'}
+                        ${results.generalInfos.map(result => `
+                            <li>
+                                <a href="${result.permalink}">${result.title}</a> ${result.type == 'post' ? `by ${result.authorName}` : '' }
+                            </li>
+                        `).join('')}
+                        ${results.generalInfos.length ? '</ul>' : ''}
+                    </div>
+                    <div class="one-third">
+                        <h2 class="search-overlay__section-title">Programs</h2>
+                        ${results.programs.length ? '<ul class="link-list min-list">' : `<p>No programs matchs that search. <a href="${universityData.root_url}/programs">View all programs</a></p>`}
+                        ${results.programs.map(result => `
+                            <li>
+                                <a href="${result.permalink}">${result.title}</a> ${result.type == 'post' ? `by ${result.authorName}` : '' }
+                            </li>
+                        `).join('')}
+                        ${results.programs.length ? '</ul>' : ''}
+                        <h2 class="search-overlay__section-title">Professors</h2>
+                        ${results.professors.length ? '<ul class="link-list min-list">' : `<p>No professors matchs that search. <a href="${universityData.root_url}/professors">View all professors</a></p>`}
+                        ${results.professors.map(result => `
+                            <li>
+                                <a href="${result.permalink}">${result.title}</a> ${result.type == 'post' ? `by ${result.authorName}` : '' }
+                            </li>
+                        `).join('')}
+                        ${results.professors.length ? '</ul>' : ''}
+                    </div>
+                    <div class="one-third">
+                        <h2 class="search-overlay__section-title">Campuses</h2>
+                        ${results.campuses.length ? '<ul class="link-list min-list">' : `<p>No campuses matchs that search. <a href="${universityData.root_url}/campuses">View all campuses</a></p>`}
+                        ${results.campuses.map(result => `
+                            <li>
+                                <a href="${result.permalink}">${result.title}</a> ${result.type == 'post' ? `by ${result.authorName}` : '' }
+                            </li>
+                        `).join('')}
+                        ${results.campuses.length ? '</ul>' : ''}
+                        <h2 class="search-overlay__section-title">Events</h2>
+                        ${results.events.length ? '<ul class="link-list min-list">' : '<p>No events matchs that search</p>'}
+                        ${results.events.map(result => `
+                            <li>
+                                <a href="${result.permalink}">${result.title}</a> ${result.type == 'post' ? `by ${result.authorName}` : '' }
+                            </li>
+                        `).join('')}
+                        ${results.events.length ? '</ul>' : ''}
+                    </div>
+                </div>
             `);
         })
         .fail((err) => {
             this.resultsDiv.append('<p>Something went wrong please try again.</p>');
+            // console.log(err.status + ' ' + err.responseJSON.message);
+            console.log(err);
+            console.log(err.responseText);
         })
         .always(() => {
             this.spinner.hide();
