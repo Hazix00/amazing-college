@@ -1,0 +1,1 @@
+{"E:\\laragon\\www\\amazing-college\\gulpfile.js":{"sha1":"582a6ce95bc93f2f117998b9d501d53684ed34d9","tasks":{"styles":{"name":"styles","dependencies":""},"scripts":{"name":"scripts","dependencies":""},"watch":{"name":"watch","dependencies":""},"waitForStyles":{"name":"waitForStyles","dependencies":""},"waitForScripts":{"name":"waitForScripts","dependencies":"scripts "}}}}

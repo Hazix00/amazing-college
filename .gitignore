@@ -1,0 +1,4 @@
+/node_modules
+package-lock.json
+/wp-content/themes/fictional-university-theme/node_modules
+/wp-content/themes/fictional-university-theme/package-lock.json
