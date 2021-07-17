@@ -44,6 +44,7 @@ function universitySearchResults($data){
         else { // the other post types
 
             if($type == 'campus') $type .= 'e';
+            if($type == 'program') $postData['id'] = get_the_id();
             if($type == 'professor') $postData['image'] = get_the_post_thumbnail_url(0, 'professorLandscape'); // get image for professor
             if($type == 'event') { // get the day, month and description for event
                 $date = new DateTime(get_field('event_date'));
@@ -54,6 +55,39 @@ function universitySearchResults($data){
             array_push($results[$type.'s'], $postData);
         }
     }
+
+    if ($results['programs']) { // professors related programs
+        
+        $programMetaQuery = array('relation' => 'OR');
+        foreach ($results['programs'] as $program) {
+            array_push($programMetaQuery, array(
+                array(
+                    'key' => 'related_programs',
+                    'compare' => 'LIKE',
+                    'value' => '"'.$program['id'].'"'
+                )
+            ));
+        }
+    
+        $programRelationshipQuery = new WP_Query(array(
+            'post_type' => 'professor',
+            'meta_query' => $programMetaQuery
+        ));
+    
+        while ($programRelationshipQuery->have_posts()) {
+            $programRelationshipQuery->the_post();
+            $professor = array(
+                'title' => get_the_title(),
+                'permalink' => get_the_permalink(),
+                'image' => get_the_post_thumbnail_url(0, 'professorLandscape')
+            );
+            $found_key = array_search($professor['permalink'] , array_column($results['professors'], 'permalink'));
+            if ($found_key == false and gettype($found_key) == 'boolean' ) {
+                array_push($results['professors'], $professor);
+            }
+        }
+    }
+
 
     return $results;
 }
