@@ -777,7 +777,7 @@ function rest_send_allow_header( $response, $server, $request ) {
 	if ( $allowed_methods ) {
 		$response->header( 'Allow', implode( ', ', array_map( 'strtoupper', array_keys( $allowed_methods ) ) ) );
 	}
-
+	ob_clean();
 	return $response;
 }
 
